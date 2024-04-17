@@ -1,3 +1,5 @@
+const { get } = require("../routes/warehouse-routes");
+
 const knex = require("knex")(require("../knexfile"));
 
 const getWarehouseInventories = async (req, res) => {
@@ -19,6 +21,25 @@ const getWarehouseInventories = async (req, res) => {
   }
 };
 
+const getAllInventories = async (req, res) => {
+  try {
+    const data = await knex("inventories")
+      .join("warehouses", "inventories.warehouse_id", "warehouses.id")
+      .select(
+        "inventories.id",
+        "warehouses.warehouse_name",
+        "inventories.item_name",
+        "inventories.description",
+        "inventories.category",
+        "inventories.status",
+        "inventories.quantity"
+      );
+    res.status(200).json(data);
+  } catch (err) {
+    res.status(500).send(`Unable to retrieve inventory data: ${err}`);
+  }
+}
 module.exports = {
   getWarehouseInventories,
+  getAllInventories,
 };
