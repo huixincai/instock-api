@@ -13,5 +13,6 @@ router
 router.route("/:id").delete(warehouseController.deleteWarehouse);
 
 router.route("/:id").get(warehouseController.getOneWarehouse);
+router.put("/:id", warehouseController.updateWarehouse);
 
 module.exports = router;
