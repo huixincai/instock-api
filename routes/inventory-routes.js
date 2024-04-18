@@ -11,4 +11,9 @@ router
   .get(inventoryController.getInventory)
   .delete(inventoryController.deleteInventory);
 
+
+router
+  .route("/")
+  .post(inventoryController.addInventory);
+
 module.exports = router;
