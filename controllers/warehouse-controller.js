@@ -68,6 +68,7 @@ const addWarehouse = async (req, res) => {
   );
   if (!regExp.test(req.body.contact_phone)) {
     return res.status(400).json({
+      type: "phone",
       message: "Please provide a correct phone number",
     });
   }
@@ -75,6 +76,7 @@ const addWarehouse = async (req, res) => {
   //validate the email
   if (!validator.validate(req.body.contact_email)) {
     return res.status(400).json({
+      type: "email",
       message: "Please provide a correct email address",
     });
   }
