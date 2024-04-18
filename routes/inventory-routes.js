@@ -10,4 +10,9 @@ router
   .route("/:id")
   .get(inventoryController.getInventory);
 
+
+router
+  .route("/")
+  .post(inventoryController.addInventory);
+
 module.exports = router;

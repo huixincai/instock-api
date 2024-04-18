@@ -67,8 +67,44 @@ const getInventory = async (req, res) => {
   }
 };
 
+
+
+const addInventory = async (req, res) => {
+  const { warehouse_id, item_name, description, category, status, quantity } = req.body;
+  if (!warehouse_id || !item_name || !description || !category || !status || !quantity) {
+    return res.status(400).json({ message: "All fields are required" });
+  }
+  
+  if (isNaN(warehouse_id) || isNaN(quantity)) {
+    return res.status(400).json({ message: "warehouse_id and quantity must be numbers" });
+  }
+  try {
+    const warehouse = await knex("warehouses").where("id", warehouse_id).first();
+    if (!warehouse) {
+      return res.status(400).json({ message: "warehouse_id does not exist" });
+    }
+    const [newInventory] = await knex("inventories")
+      .insert({
+        warehouse_id,
+        item_name,
+        description,
+        category,
+        status,
+        quantity
+      })
+      .returning('*');
+      
+      res.status(201).json(newInventory[0]);
+  } catch (err) {
+    console.error("Error adding inventory:", err);
+    res.status(500).send("Internal Server Error");
+  }
+};
+
 module.exports = {
   getWarehouseInventories,
   getAllInventories,
-  getInventory
+  getInventory,
+  addInventory,
 };
+
