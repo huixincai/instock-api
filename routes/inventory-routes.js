@@ -8,7 +8,8 @@ router
 
 router
   .route("/:id")
-  .get(inventoryController.getInventory);
+  .get(inventoryController.getInventory)
+  .delete(inventoryController.deleteInventory);
 
 
 router
