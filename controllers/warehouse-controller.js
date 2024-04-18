@@ -57,14 +57,7 @@ const addWarehouse = async (req, res) => {
     !req.body.contact_email
   ) {
     return res.status(400).json({
-      message: "Please provide complete information for the warehouse",
-    });
-  }
-
-  //validate the email
-  if (!validator.validate(req.body.contact_email)) {
-    return res.status(400).json({
-      message: "Please provide a correct email address for the warehouse",
+      message: "Please provide complete information",
     });
   }
 
@@ -75,7 +68,14 @@ const addWarehouse = async (req, res) => {
   );
   if (!regExp.test(req.body.contact_phone)) {
     return res.status(400).json({
-      message: "Please provide a correct phone number for the warehouse",
+      message: "Please provide a correct phone number",
+    });
+  }
+
+  //validate the email
+  if (!validator.validate(req.body.contact_email)) {
+    return res.status(400).json({
+      message: "Please provide a correct email address",
     });
   }
 
