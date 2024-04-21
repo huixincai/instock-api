@@ -123,54 +123,50 @@ const deleteInventory = async (req, res) => {
 };
 
 const updateInventory = async (req, res) => {
-  const { warehouse_id, item_name, description, category, status, quantity } =
-    req.body;
+  const { item_name, description, category, status, quantity } = req.body;
+  const inventoryId = req.params.id;
 
-  if (
-    !warehouse_id ||
-    !item_name ||
-    !description ||
-    !category ||
-    !status ||
-    !quantity
-  ) {
+  // Check if all required fields are present
+  if (!item_name || !description || !category || !status || !quantity) {
     return res
       .status(400)
       .json({ message: "All fields are required to fill out." });
   }
 
-  if (isNaN(warehouse_id) || isNaN(quantity)) {
-    return res
-      .status(400)
-      .json({ message: "warehouse_id and quantity must be numbers." });
+  // Validate if quantity is a number
+  if (isNaN(quantity)) {
+    return res.status(400).json({ message: "Quantity must be a number." });
   }
 
   try {
+    // Check if the inventory ID exists
+    const inventoryExists = await knex("inventories")
+      .where({ id: inventoryId })
+      .first();
+    if (!inventoryExists) {
+      return res.status(404).json({ message: "Inventory ID not found" });
+    }
+
+    // Check if warehouse_id exists in the warehouses table
     const warehouseExists = await knex("warehouses")
-      .where({ id: warehouse_id })
+      .where({ id: inventoryExists.warehouse_id })
       .first();
     if (!warehouseExists) {
       return res.status(400).json({ message: "warehouse_id does not exist." });
     }
 
-    const updateCount = await knex("inventories")
-      .where({ id: req.params.id })
-      .update({
-        warehouse_id,
-        item_name,
-        description,
-        category,
-        status,
-        quantity,
-      });
+    // Update inventory details
+    await knex("inventories").where({ id: inventoryId }).update({
+      item_name,
+      description,
+      category,
+      status,
+      quantity,
+    });
 
-    if (updateCount === 0) {
-      return res.status(404).json({ message: `Inventory ID ${id} not found` });
-    }
-
-    // Retrieve the updated inventory item to return in the response
+    // Retrieve the updated inventory item
     const updatedInventory = await knex("inventories")
-      .where({ id: req.params.id })
+      .where({ id: inventoryId })
       .first();
     res.status(200).json(updatedInventory);
   } catch (err) {
