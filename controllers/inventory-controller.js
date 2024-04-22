@@ -160,7 +160,7 @@ const updateInventory = async (req, res) => {
       description,
       category,
       status,
-      quantity,
+      quantity: status === "Out of Stock" ? 0 : quantity,
     });
 
     // Retrieve the updated inventory item
