@@ -66,34 +66,33 @@ const getInventory = async (req, res) => {
 };
 
 const addInventory = async (req, res) => {
-  const { warehouse_id, item_name, description, category, status, quantity } =
+  const { warehouse_name, item_name, description, category, status, quantity } =
     req.body;
   if (
-    !warehouse_id ||
+    !warehouse_name ||
     !item_name ||
     !description ||
     !category ||
-    !status ||
-    !quantity
+    !status
   ) {
     return res.status(400).json({ message: "All fields are required" });
   }
 
-  if (isNaN(warehouse_id) || isNaN(quantity)) {
+  if (isNaN(quantity)) {
     return res
       .status(400)
       .json({ message: "warehouse_id and quantity must be numbers" });
   }
   try {
     const warehouse = await knex("warehouses")
-      .where("id", warehouse_id)
+      .where("warehouse_name", warehouse_name)
       .first();
     if (!warehouse) {
-      return res.status(400).json({ message: "warehouse_id does not exist" });
+      return res.status(400).json({ message: "warehouse_name does not exist" });
     }
     const [newInventory] = await knex("inventories")
       .insert({
-        warehouse_id,
+        warehouse_id: warehouse.id,
         item_name,
         description,
         category,
